@@ -423,10 +423,9 @@ def import_object(file, chunk_size):
                         face.loops[0][uv_layer].uv = (face_uv[2], 1 - face_uv[5])
                         
                         # apply flags
-                        # for some reason vert.hide isn't working so we hide the face as a workaround...
                         if ft_flags & z3dflags.Z3D_FLAG_SELECTED:
                             face.select = True
-                        if ft_flags & z3dflags.Z3D_FLAG_HIDDEN or (vert0.hide or vert1.hide or vert2.hide):
+                        if ft_flags & z3dflags.Z3D_FLAG_HIDDEN:
                             face.hide = True
                         
                         # assign material
@@ -457,6 +456,13 @@ def import_object(file, chunk_size):
         
         if file.tell() >= chunk_end:
             break
+    
+    # hide all vertices we requested the hide flag for
+    # we do it here because if we do it before adding faces
+    # hide_set does nothing
+    for vert in bm.verts:
+        if vert.hide:
+            vert.hide_set(True)
     
     # calculate normals
     bm.normal_update()

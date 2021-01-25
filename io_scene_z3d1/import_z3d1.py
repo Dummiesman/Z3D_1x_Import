@@ -217,6 +217,7 @@ def import_object(file, chunk_size):
 
     bm = bmesh.new()
     bm.from_mesh(me)
+    hide_verts = []
     
     scn.collection.objects.link(ob)
     
@@ -337,7 +338,7 @@ def import_object(file, chunk_size):
                     if vt_flags & z3dflags.Z3D_FLAG_SELECTED:
                         vert.select = True
                     if vt_flags & z3dflags.Z3D_FLAG_HIDDEN:
-                        vert.hide = True
+                        hide_verts.append(vert)
                     
                 bm.verts.ensure_lookup_table()
             else:
@@ -457,12 +458,12 @@ def import_object(file, chunk_size):
         if file.tell() >= chunk_end:
             break
     
-    # hide all vertices we requested the hide flag for
+    # hide vertices with the Z3D_FLAG_HIDDEN flag
     # we do it here because if we do it before adding faces
     # hide_set does nothing
-    for vert in bm.verts:
-        if vert.hide:
-            vert.hide_set(True)
+    for vert in hide_verts:
+        vert.hide_set(True)
+            
     
     # calculate normals
     bm.normal_update()

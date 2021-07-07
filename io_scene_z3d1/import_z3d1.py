@@ -507,7 +507,7 @@ def load_z3d1(filepath,
     if bpy.ops.object.select_all.poll():
         bpy.ops.object.select_all(action='DESELECT')
 
-    time1 = time.clock()
+    time1 = time.perf_counter()
     file = open(filepath, 'rb')
     
     file_dir = os.path.dirname(filepath)
@@ -611,7 +611,7 @@ def load_z3d1(filepath,
             file.seek(chunk_size, 1)
         
     print(" read " + str(file.tell()) + " of " + str(fsize))
-    print(" done in %.4f sec." % (time.clock() - time1))
+    print(" done in %.4f sec." % (time.perf_counter() - time1))
     
     file.close()
 
